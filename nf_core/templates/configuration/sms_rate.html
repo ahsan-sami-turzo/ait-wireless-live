@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatables.css' %}">
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                </div>
+                <!-- Server Side Processing start-->
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="display datatables" id="datatable-post">
+                                    <thead>
+                                    <tr>
+                                        <th>#UID</th>
+                                        <th>Operator</th>
+                                        <th>Prefix</th>
+                                        <th>Non-Masking Rate</th>
+                                        <th>Masking Rate</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Server Side Processing end-->
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="text" value="add" name="action" id="modal_action" hidden>
+                    <input type="text" value="" name="rate_id" id="modal_rate_id" hidden>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Add SMS Rate</h5>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close" data-bs-original-title="" title=""></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-form-label">{{ sms_rate_form.operator_name.label }}</label>
+                            {{ sms_rate_form.operator_name }}
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">{{ sms_rate_form.operator_prefix.label }}</label>
+                            {{ sms_rate_form.operator_prefix }}
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">{{ sms_rate_form.non_masking_sms_rate.label }}</label>
+                            {{ sms_rate_form.non_masking_sms_rate }}
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">{{ sms_rate_form.masking_sms_rate.label }}</label>
+                            {{ sms_rate_form.masking_sms_rate }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal" data-bs-original-title="" title="">Close</button>
+                        <button class="btn btn-primary" type="submit" data-bs-original-title="" title="">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+    <script>
+        let ssr_url = '{% url 'nf.sms.rate.ssr' %}';
+        let default_order = [[0, 'asc']];
+        let column_definition = [
+            {
+                targets: 3, className: "text-center"
+            },
+            {
+                targets: 4, className: "text-center"
+            },
+            {
+                targets: 5, className: "text-center", orderable: false
+            }
+        ]
+
+        function addSMSRate() {
+            $("#modal_action").val("add");
+            $("#exampleModalLongTitle").html("Add SMS Rate");
+            $("#id_operator_name").val('');
+            $("#id_operator_prefix").val('');
+            $("#id_non_masking_sms_rate").val('');
+            $("#id_masking_sms_rate").val('');
+        }
+
+        function editSMSRate(id, name, prefix, nm_rate, m_rate) {
+            $("#id_operator_name").val('');
+            $("#id_operator_prefix").val('');
+            $("#id_non_masking_sms_rate").val('');
+            $("#id_masking_sms_rate").val('');
+            $("#modal_action").val("edit");
+            $("#exampleModalLongTitle").html("Update SMS Rate");
+            $("#modal_rate_id").val(id);
+            $("#id_operator_name").val(name);
+            $("#id_operator_prefix").val(prefix);
+            $("#id_non_masking_sms_rate").val(parseFloat(nm_rate));
+            $("#id_masking_sms_rate").val(parseFloat(m_rate));
+            $("#exampleModalLong").modal('show');
+        }
+    </script>
+    <script src="{% static 'assets/js/datatable/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/js/datatable/datatables/datatable.custom.js' %}"></script>
+{% endblock %}

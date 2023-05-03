@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+    <style>
+        .third-news-update .news-update .time-detail, .news .news-update .time-detail, .appointment-sec .news-update .time-detail {
+            font-weight: 500;
+            font-size: 10px;
+            color: rgba(43, 43, 43, 0.54);
+            margin-top: 8px;
+        }
+
+        .third-news-update .news-update .time-detail svg, .news .news-update .time-detail svg, .appointment-sec .news-update .time-detail svg {
+            width: 12px;
+            height: 12px;
+            vertical-align: text-bottom;
+            margin-right: 5px;
+        }
+
+        .logo-placeholder {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(220, 53, 69, 0.15);
+            border-radius: 10px;
+            margin-right: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="page-body">
+        <!-- Container-fluid starts-->
+        <div class="container-fluid pt-4">
+            <div class="row second-chart-list third-news-update">
+                <div class="col-12 col-lg-8">
+                    <div class="row">
+                        <div class="col-12 col-md-6 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body p-4">
+                                    <div class="ecommerce-widgets media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto mb-1">Total Users
+                                            <h4 class="f-w-500 mb-0 f-20">
+                                                <span class="counter" id="stat_total_user" hidden></span>
+                                                <img id="stat_total_user_loading" src="{% static 'assets/images/loading.gif' %}" height="20px">
+                                            </h4>
+                                        </div>
+                                        <div class="ecommerce-box light-bg-primary">
+                                            <i class="fa fa-users" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body p-4">
+                                    <div class="ecommerce-widgets media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto mb-0">Total SMS Delivered
+                                            <h4 class="f-w-500 mb-0 f-20">
+                                                <span class="counter" id="stat_total_sms_delivered" hidden></span>
+                                                <img id="stat_total_sms_delivered_loading" src="{% static 'assets/images/loading.gif' %}" height="20px">
+                                            </h4>
+                                        </div>
+                                        <div class="ecommerce-box light-bg-success">
+                                            <i class="fa fa-send" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body p-4">
+                                    <div class="ecommerce-widgets media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto mb-0">Total SMS Delivered Today
+                                            <h4 class="f-w-500 mb-0 f-20">
+                                                <span class="counter" id="stat_total_sms_delivered_today" hidden></span>
+                                                <img id="stat_total_sms_delivered_today_loading" src="{% static 'assets/images/loading.gif' %}" height="20px">
+                                            </h4>
+                                        </div>
+                                        <div class="ecommerce-box light-bg-warning">
+                                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-6">
+                            <div class="card o-hidden">
+                                <div class="card-body p-4">
+                                    <div class="ecommerce-widgets media">
+                                        <div class="media-body">
+                                            <p class="f-w-500 font-roboto mb-0">Total SMS Cost
+                                            <h4 class="f-w-500 mb-0 f-20">
+                                                <span class="counter" id="stat_total_sms_cost" hidden></span>
+                                                <img id="stat_total_sms_cost_loading" src="{% static 'assets/images/loading.gif' %}" height="20px">
+                                            </h4>
+                                        </div>
+                                        <div class="ecommerce-box light-bg-danger">
+                                            <i class="fa fa-credit-card" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body p-4">
+                                    <div id="basic-apex"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4 news">
+                    <div class="card">
+                        <div class="card-header text-center p-4">
+                            <div class="text-center">
+                                <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+                                <lottie-player src="{% static 'assets/images/processing.json' %}" background="transparent" speed="1"
+                                               style="width: auto; height: 60px;" loop autoplay></lottie-player>
+                                <h6 class="mb-2">Realtime SMS Monitoring</h6>
+                                <a class="m-0" href="?qc=1">
+                                    <label class="badge badge-danger" style="cursor: pointer">Clear Queue</label>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body p-0" id="realtime_body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+{% endblock %}
+
+{% block scriptcontent %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{% static 'assets/js/chart/apex-chart/apex-chart.js' %}"></script>
+    <script src="{% static 'assets/js/chart/apex-chart/stock-prices.js' %}"></script>
+    {#    <script src="{% static 'assets/js/chart/apex-chart/chart-custom.js' %}"></script>#}
+    <script>
+        function setStatData(element_id, value) {
+            $(`#${element_id}`).html(value);
+            $(`#${element_id}`).removeAttr('hidden');
+            $(`#${element_id}_loading`).attr('hidden', true);
+        }
+
+        $(document).ready(function () {
+            axios.get('{% url 'nf.dashboard.stats' %}').then((response) => {
+                if (response.data.code === 200) {
+                    let data = response.data.data;
+                    setStatData('stat_total_user', data.total_users);
+                    setStatData('stat_total_sms_delivered', data.total_sms_delivered);
+                    setStatData('stat_total_sms_delivered_today', data.total_sms_delivered_today);
+                    setStatData('stat_total_sms_cost', data.total_sms_cost);
+                }
+            });
+
+            loadChart();
+
+            loadRealtimeSMSData();
+
+            setInterval(function () {
+                loadRealtimeSMSData();
+            }, 1000);
+        });
+
+        function loadChart() {
+            let date_array = [];
+            let count_array = [];
+            axios.get('{% url 'nf.weekly.sms.graph' %}').then((response) => {
+                if (response.data.code === 200) {
+                    date_array = response.data.data.date;
+                    count_array = response.data.data.count;
+
+                    let options = {
+                        chart: {
+                            height: 350,
+                            type: 'area',
+                            zoom: {
+                                enabled: false
+                            },
+                            toolbar: {
+                                show: false
+                            }
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        stroke: {
+                            curve: 'straight'
+                        },
+                        series: [{
+                            name: "SMS Delivered",
+                            data: count_array
+                        }],
+                        title: {
+                            text: 'SMS Delivery Report for Last 7 Days',
+                            align: 'center'
+                        },
+                        subtitle: {
+                            text: `${response.data.data.filter_start_date} to ${response.data.data.filter_end_date}`,
+                            align: 'center'
+                        },
+                        labels: date_array,
+                        xaxis: {
+                            type: 'datetime',
+                        },
+                        yaxis: {
+                            opposite: false
+                        },
+                        legend: {
+                            horizontalAlign: 'left'
+                        },
+                        colors: [CubaAdminConfig.primary]
+                    }
+
+                    let chart = new ApexCharts(
+                        document.querySelector("#basic-apex"),
+                        options
+                    );
+
+                    chart.render();
+                }
+            });
+        }
+
+        function loadRealtimeSMSData() {
+            let sms_data = []
+            axios.get('{% url 'nf.realtime.stat' %}').then((response) => {
+                if (response.data.code === 200) {
+                    sms_data = response.data.data;
+                    $("#realtime_body").empty();
+                    if (sms_data.length === 0){
+                        $("#realtime_body").append(`
+                            <div class="news-update media p-3">
+                                <div class="media-body">
+                                    <h6 class="text-center text-muted mb-0">0 SMS in Queue</h6>
+                                </div>
+                            </div>
+                        `);
+                    }
+                    sms_data.forEach((sms) => {
+                        $("#realtime_body").append(`
+                            <div class="news-update media p-3">
+                                <div class="logo-placeholder">
+                                    <img class="img-fluid me-3"
+                                         src="${sms['operator']}" alt="">
+                                </div>
+                                <div class="media-body">
+                                    <h6 class="float-start mb-0">${sms['username']}</h6>
+                                    <img class="float-end" src="{% static 'assets/images/loading.gif' %}" height="20px">
+                                    <br>
+                                    <span class="time-detail">
+                                        ${sms['sms_count']} SMS | <i data-feather="clock"></i>${sms['timestamp']}
+                                    </span>
+                                </div>
+                            </div>
+                        `)
+                    })
+                }
+            });
+        }
+    </script>
+{% endblock %}

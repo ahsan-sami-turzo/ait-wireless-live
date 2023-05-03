@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatables.css' %}">
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                </div>
+                <!-- Server Side Processing start-->
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="display datatables" id="datatable-post">
+                                    <thead>
+                                    <tr>
+                                        <th>#UID</th>
+                                        <th>Photo</th>
+                                        <th>Info</th>
+                                        <th>Credit</th>
+                                        <th>Registered On</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Server Side Processing end-->
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        let ssr_url = '{% url 'nf.client.pending.config.ssr' %}';
+        let default_order = [[0, 'asc']];
+        let column_definition = [
+            {
+                targets: 1, orderable: false
+            },
+            {
+                targets: 3, className: "text-center"
+            },
+            {
+                targets: 4, className: "text-center"
+            },
+            {
+                targets: 5, className: "text-center", orderable: false
+            }
+        ]
+    </script>
+    <script src="{% static 'assets/js/datatable/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/js/datatable/datatables/datatable.custom.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+    <style>
+        .select2-container {
+            line-height: 1.44 !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            padding-top: 5px !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            border: none !important;
+        }
+
+        .select2-container--default .select2-selection--multiple {
+            border: 1px solid #ced4da !important;
+        }
+    </style>
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                </div>
+                <div class="col-sm-12">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="text" class="form-control"
+                                               value="{{ user_info_instance.user.first_name }} {{ user_info_instance.user.last_name }} - {{ user_info_instance.mobile }} - {{ user_info_instance.user.email }}"
+                                               readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <div class="row">
+                                    <div class="col-12 col-lg-6">
+                                        <div class="col-form-label pt-0">Sender ID</div>
+                                        <select class="js-example-basic-single col-sm-12" multiple="multiple" name="sender_id" id="sender_id" required>
+                                            {% for sid in sender_ids %}
+                                                {% if sid.id in sender_id_array %}
+                                                    <option value="{{ sid.id }}" selected>{{ sid.sender_id }}</option>
+                                                {% else %}
+                                                    <option value="{{ sid.id }}">{{ sid.sender_id }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-lg-3">
+                                        <div class="col-form-label pt-0">Queue (<a href="javascript:void(0)" onclick="decideQueue()">Change</a>)</div>
+                                        <input type="text" class="form-control" id="sms_queue" value="{{ user_configuration.queue.name }}" readonly>
+                                        <input type="text" class="form-control" id="sms_queue_id" name="sms_queue_id" value="{{ user_configuration.queue.id }}" required hidden>
+                                    </div>
+                                    <div class="col-12 col-lg-3">
+                                        <div class="col-form-label pt-0">Priority</div>
+                                        <div class="form-check checkbox mb-0">
+                                            <input class="form-check-input" id="priority_checkbox" type="checkbox" name="priority_checkbox" value="1"
+                                                   {% if user_configuration.priority %}checked{% endif %}>
+                                            <label class="form-check-label" for="priority_checkbox">Yes</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center">Prefix</th>
+                                                <th class="text-center">Non-Masking Rate</th>
+                                                <th class="text-center">Masking Rate</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for rate in user_configuration.sms_rate.all %}
+                                                <tr>
+                                                    <td>{{ rate.operator }} ({{ rate.prefix }})</td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <input class="form-control text-center" step="any" type="number" value="{{ rate.non_masking_rate }}"
+                                                                   name="rate_-_{{ rate.operator }}_-_{{ rate.prefix }}_-_nm_-_{{ rate.id }}" required>
+                                                            <span class="input-group-text">{{ currency_name }}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <input class="form-control text-center" step="any" type="number" value="{{ rate.masking_rate }}"
+                                                                   name="rate_-_{{ rate.operator }}_-_{{ rate.prefix }}_-_m_-_{{ rate.id }}" required>
+                                                            <span class="input-group-text">{{ currency_name }}</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        <button type="submit" class="btn btn-primary float-end m-2">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        let priority_checkbox = $('#priority_checkbox');
+
+        function decideQueue() {
+            $("#sms_queue").val('Processing...');
+            $("#sms_queue_id").val('');
+            let queue_check_url;
+            if (priority_checkbox.is(":checked")) {
+                queue_check_url = '{% url 'nf.decide.sms.queue' %}' + '?priority=1';
+            } else {
+                queue_check_url = '{% url 'nf.decide.sms.queue' %}';
+            }
+            axios.get(queue_check_url).then((response) => {
+                if (response.data.code === 200) {
+                    $("#sms_queue").val(response.data.data.name);
+                    $("#sms_queue_id").val(response.data.data.id);
+                }
+            });
+        }
+    </script>
+{% endblock %}

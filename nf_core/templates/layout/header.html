@@ -1,0 +1,63 @@
+{% load static %}
+
+<!-- Page Header Start-->
+<div class="page-header">
+    <div class="header-wrapper row m-0">
+        <div class="header-logo-wrapper col-auto p-0">
+            <div class="logo-wrapper">
+                <a href="{% url 'nf.index' %}">
+                    <img class="img-fluid for-light" src="{% static 'assets/images/logo/logo.png' %}" alt="">
+                    <img class="img-fluid for-dark" src="{% static 'assets/images/logo/logo_dark.png' %}" alt="">
+                </a>
+            </div>
+            <div class="toggle-sidebar">
+                <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i>
+            </div>
+        </div>
+        <div class="left-header col horizontal-wrapper ps-0">
+            <ul class="horizontal-menu">
+                <li class="level-menu outside">
+                    <a class="nav-link bg-light-success" href="https://worker.ambalawireless.com" target="_blank">
+                        <i data-feather="zap"></i>
+                        <span>Manage Worker</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="nav-right col-8 pull-right right-header p-0">
+            <ul class="nav-menus">
+                <li class="language-nav">
+                    <div class="translate_wrapper">
+                        <div class="current_lang">
+                            <div class="lang"><i class="flag-icon flag-icon-us"></i><span class="lang-txt">EN                               </span></div>
+                        </div>
+                        <div class="more_lang">
+                            <div class="lang selected" data-value="en">
+                                <i class="flag-icon flag-icon-us"></i>
+                                <span class="lang-txt">English<span> (US)</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="maximize">
+                    <a class="text-dark" href="javascript:void(0);" onclick="toggleFullScreen()">
+                        <i data-feather="maximize"></i>
+                    </a>
+                </li>
+                <li class="profile-nav onhover-dropdown p-0 me-0">
+                    <div class="media profile-media">
+                        <img class="b-r-10 user-avatar rounded-circle" src="{{ request.session.user_avatar }}" alt="">
+                        <div class="media-body"><span>{{ request.user.first_name }} {{ request.user.last_name }}</span>
+                            <p class="mb-0 font-roboto">{{ request.user.groups.last.name }} <i class="middle fa fa-angle-down"></i></p>
+                        </div>
+                    </div>
+                    <ul class="profile-dropdown onhover-show-div">
+                        <li><a href="{% url 'nf.my.account' %}"><i data-feather="user"></i><span>My Account </span></a></li>
+                        <li><a href="{% url 'auth.logout' %}"><i data-feather="log-out"> </i><span>Logout</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Page Header Ends -->

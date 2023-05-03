@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatables.css' %}">
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                </div>
+                <!-- Server Side Processing start-->
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <form>
+                                <div class="row">
+                                    <div class="col-12 col-lg-3 mb-2">
+                                        <select class="form-control js-example-basic-single" name="user" id="filter_user">
+                                            <option value="">Select user account</option>
+                                            {% for user in user_list %}
+                                                <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }} # {{ user.id }} - {{ user.email }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-lg-3 mb-2">
+                                        <select class="form-control js-example-basic-single" name="operator" id="operator">
+                                            <option value="">Select operator</option>
+                                            <option value="Grameenphone">Grameenphone</option>
+                                            <option value="Banglalink">Banglalink</option>
+                                            <option value="Robi">Robi</option>
+                                            <option value="Airtel">Airtel</option>
+                                            <option value="Teletalk">Teletalk</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-lg-2 mb-2">
+                                        <input type="date" class="form-control" name="from" placeholder="From Date" value="{{ request.GET.from }}">
+                                    </div>
+                                    <div class="col-12 col-lg-2 mb-2">
+                                        <input type="date" class="form-control" name="to" placeholder="To Date" value="{{ request.GET.to }}">
+                                    </div>
+                                    <div class="col-12 col-lg-3 mb-2">
+                                        <select class="form-control js-example-basic-single" name="status" id="filter_status">
+                                            <option value="">Select status</option>
+                                            <option value="Delivered">Delivered</option>
+                                            <option value="Failed">Failed</option>
+                                            <option value="Pending">Pending</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-lg-2 mb-2">
+                                        <button type="submit" class="btn btn-primary">Filter</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="display datatables" id="datatable-post">
+                                    <thead>
+                                    <tr>
+                                        <th>#UID</th>
+                                        <th>User</th>
+                                        <th>Receiver</th>
+                                        <th>Timestamp</th>
+                                        <th>Sender ID</th>
+                                        <th>Cost</th>
+                                        <th>SMS Content</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Server Side Processing end-->
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#filter_user").val('{{ request.GET.user }}').trigger('change');
+            $("#filter_status").val('{{ request.GET.status }}').trigger('change');
+            $("#operator").val('{{ request.GET.operator }}').trigger('change');
+        });
+
+        let ssr_url = '{% url 'nf.sms.report.ssr' %}' + '?user={{ request.GET.user }}' + '&from={{ request.GET.from }}' + '&to={{ request.GET.to }}' + '&status={{ request.GET.status }}' + '&operator={{ request.GET.operator }}';
+        let default_order = [[0, 'desc']];
+        let column_definition = [
+            {
+                targets: 1, orderable: false
+            },
+            {
+                targets: 2, className: "text-center"
+            },
+            {
+                targets: 3, className: "text-center"
+            },
+            {
+                targets: 4, className: "text-center"
+            },
+            {
+                targets: 5, className: "text-center"
+            },
+            {
+                targets: 6, className: "text-center"
+            },
+            {
+                targets: 7, className: "text-center"
+            }
+        ]
+    </script>
+    <script src="{% static 'assets/js/datatable/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/js/datatable/datatables/datatable.custom.js' %}"></script>
+{% endblock %}

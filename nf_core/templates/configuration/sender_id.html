@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatables.css' %}">
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                </div>
+                <!-- Server Side Processing start-->
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="display datatables" id="datatable-post">
+                                    <thead>
+                                    <tr>
+                                        <th>#UID</th>
+                                        <th>Sender ID</th>
+                                        <th>Default</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Server Side Processing end-->
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="text" value="add" name="action" id="modal_action" hidden>
+                    <input type="text" value="" name="instance_id" id="modal_instance_id" hidden>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Add Sender ID</h5>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close" data-bs-original-title="" title=""></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-form-label">{{ sender_id_form.sender_id.label }}</label>
+                            {{ sender_id_form.sender_id }}
+                            <small class="text-danger" id="sender_id_error"></small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal" data-bs-original-title="" title="">Close</button>
+                        <button class="btn btn-primary" type="submit" id="submit_btn" data-bs-original-title="" title="">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        let ssr_url = '{% url 'nf.sender.id.ssr' %}';
+        let default_order = [[0, 'asc']];
+        let column_definition = [
+            {
+                targets: 2, className: "text-center"
+            },
+            {
+                targets: 3, className: "text-center", orderable: false
+            }
+        ]
+
+        function addSenderID() {
+            $("#sender_id_error").html('');
+            $("#exampleModalLong #submit_btn").removeAttr('disabled');
+            $("#modal_action").val("add");
+            $("#exampleModalLongTitle").html("Add Sender ID");
+            $("#id_sender_id").val('');
+        }
+
+        function editSenderID(id, sender_id) {
+            $("#sender_id_error").html('');
+            $("#exampleModalLong #submit_btn").removeAttr('disabled');
+            $("#id_sender_id").val('');
+            $("#modal_action").val("edit");
+            $("#exampleModalLongTitle").html("Update Sender ID");
+            $("#modal_instance_id").val(id);
+            $("#id_sender_id").val(sender_id);
+            $("#exampleModalLong").modal('show');
+        }
+
+        $("#id_sender_id").keyup(debounce(function () {
+            let $this = $(this);
+            let sender_id = $this.val();
+            const axios_config = {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            };
+            let request_payload = {
+                'sender_id': sender_id.trim()
+            }
+            axios.post('{% url 'nf.sender.id.duplicate.check' %}', request_payload, axios_config).then((response) => {
+                if (response.data.code === 200) {
+                    if (response.data.data) {
+                        $("#sender_id_error").html('Sender ID already exists!');
+                        $("#exampleModalLong #submit_btn").attr('disabled', true);
+                    } else {
+                        $("#sender_id_error").html('');
+                        $("#exampleModalLong #submit_btn").removeAttr('disabled');
+                    }
+                }
+            });
+        }, 100));
+    </script>
+    <script src="{% static 'assets/js/datatable/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/js/datatable/datatables/datatable.custom.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                </div>
+                <div class="col-xl-12">
+                    <form class="card" action="" method="post">
+                        {% csrf_token %}
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">First Name<span class="text-danger">*</span></label>
+                                        {{ user_form.first_name }}
+                                        <small class="text-danger">{{ user_form.first_name.errors }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Last Name</label>
+                                        {{ user_form.last_name }}
+                                        <small class="text-danger">{{ user_form.last_name.errors }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Company</label>
+                                        {{ user_info_form.company_name }}
+                                        <small class="text-danger">{{ user_info_form.company_name.errors }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Address</label>
+                                        {{ user_info_form.address }}
+                                        <small class="text-danger">{{ user_info_form.address.errors }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Mobile Number<span class="text-danger">*</span></label>
+                                        {{ user_info_form.mobile }}
+                                        <small class="text-danger">{{ user_info_form.mobile.errors }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email address<span class="text-danger">*</span></label>
+                                        {{ user_form.email }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="password1">New Password<span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" id="password1" name="password1" placeholder="********" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="password2">Confirm New Password<span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" id="password2" name="password2" placeholder="********" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <button class="btn btn-primary float-end" type="submit" data-bs-original-title="" title="">Create User</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function selectPhoto() {
+            $("#id_user_image").click();
+        }
+
+        function submitPhotoForm() {
+            $("#photoSubmit").click();
+        }
+    </script>
+{% endblock %}

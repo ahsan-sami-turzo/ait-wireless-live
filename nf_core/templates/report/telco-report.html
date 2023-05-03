@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                </div>
+                <div class="col-sm-12">
+                    <form>
+                        From Date <input name="from_date" type="date" value="{{ request.GET.from_date }}" data-language="en" required style="line-height: 1.4 !important; margin-right: 10px;">
+                        To Date <input name="to_date" type="date" value="{{ request.GET.to_date }}" data-language="en" required style="line-height: 1.4 !important; margin-right: 10px;">
+                        <button type="submit" class="btn btn-primary btn-sm">View Report</button>
+                    </form>
+                </div>
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12 col-lg-6">
+                            <div class="card mt-3">
+                                <div class="card-body p-4">
+                                    <p class="text-center">Report from {{ from_date|date:"d M Y" }} to {{ to_date|date:"d M Y" }}</p>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th class="text-center">Operator Name</th>
+                                            <th class="text-center">Outbound SMS</th>
+                                            <th class="text-center">%</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for report in report_data %}
+                                            <tr>
+                                                <td class="text-center">{{ report.operator_name }}</td>
+                                                <td class="text-center">{{ report.sms_count|floatformat:0 }}</td>
+                                                <td class="text-center">{{ report.percentage|floatformat:2 }}%</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="card mt-3">
+                                <div class="card-body apex-chart p-4">
+                                    <p class="text-center">Report from {{ from_date|date:"d M Y" }} to {{ to_date|date:"d M Y" }}</p>
+                                    <div id="piechart"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+    <script src="{% static 'assets/js/chart/apex-chart/apex-chart.js' %}"></script>
+    <script src="{% static 'assets/js/chart/apex-chart/stock-prices.js' %}"></script>
+    <script>
+        // pie chart
+        var options8 = {
+            chart: {
+                width: 380,
+                type: 'pie',
+            },
+            labels: JSON.parse('{{ graph_series_label|escapejs }}'),
+            series: JSON.parse('{{ graph_series_value|escapejs }}'),
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }],
+            colors: [CubaAdminConfig.primary, CubaAdminConfig.secondary, '#51bb25', '#a927f9', '#f8d62b']
+        }
+
+        var chart8 = new ApexCharts(
+            document.querySelector("#piechart"),
+            options8
+        );
+
+        chart8.render();
+    </script>
+{% endblock %}

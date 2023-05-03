@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatables.css' %}">
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                </div>
+                <!-- Server Side Processing start-->
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <form>
+                                <div class="row">
+                                    <div class="col-12 col-lg-4">
+                                        <select class="form-control js-example-basic-single" name="user" id="filter_user">
+                                            <option value="">Select user account</option>
+                                            {% for user in user_list %}
+                                                <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }} # {{ user.id }} - {{ user.email }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-lg-2">
+                                        <button type="submit" class="btn btn-primary">Filter</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {% if 'user' in request.GET and request.GET.user != "" %}
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <div class="table-responsive">
+                                    <div class="text-center">
+                                        <label class="badge badge-primary" style="font-size: 13px;">{{ user_info.user.get_full_name }}</label>
+                                        <br>
+                                        <label class="badge badge-secondary" style="font-size: 16px;">Current Account Balance {{ user_info.credit|floatformat:2 }} BDT</label>
+                                        <hr>
+                                    </div>
+                                    <table class="display datatables" id="datatable-post">
+                                        <thead>
+                                        <tr>
+                                            <th>#UID</th>
+                                            <th>Info</th>
+                                            <th>Date</th>
+                                            <th>Type</th>
+                                            <th>Old Balance</th>
+                                            <th>Cr/Dr</th>
+                                            <th>New Balance</th>
+                                            <th>Expiry</th>
+                                            <th>Remarks</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- Server Side Processing end-->
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#filter_user").val('{{ request.GET.user }}').trigger('change');
+        });
+
+        let ssr_url = '{% url 'nf.recharge.report.ssr' %}' + '?user={{ request.GET.user }}' + '&from={{ request.GET.from }}' + '&to={{ request.GET.to }}';
+        let default_order = [[0, 'desc']];
+        let column_definition = [
+            {
+                targets: 1, orderable: false
+            },
+            {
+                targets: 2, className: "text-center"
+            },
+            {
+                targets: 3, className: "text-center"
+            },
+            {
+                targets: 4, className: "text-center"
+            },
+            {
+                targets: 5, className: "text-center"
+            },
+            {
+                targets: 6, className: "text-center"
+            },
+            {
+                targets: 7, className: "text-center"
+            },
+            {
+                targets: 8, orderable: false
+            }
+        ]
+    </script>
+    <script src="{% static 'assets/js/datatable/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/js/datatable/datatables/datatable.custom.js' %}"></script>
+{% endblock %}

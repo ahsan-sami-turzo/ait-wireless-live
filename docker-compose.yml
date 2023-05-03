@@ -1,0 +1,108 @@
+version: '3'
+
+services:
+  notifier_production_db:
+    image: postgres:14.5
+    container_name: notifier_production_db
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - '5433:5432'
+    volumes:
+      - /home/nf_docker_data/production/postgresql:/var/lib/postgresql/data
+
+  notifier_production_pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: notifier_production_pgadmin
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - '5481:80'
+      - '5442:443'
+    volumes:
+      - /home/nf_docker_data/production/pgadmin:/var/lib/pgadmin
+
+  notifier_production_redis:
+    image: redis:alpine
+    restart: unless-stopped
+    container_name: notifier_production_redis
+    read_only: false
+    env_file:
+      - .env
+    ports:
+      - "6378:6378"
+    command: redis-server --port 6378 --appendonly yes --requirepass "ambalA9090"
+
+  notifier_production_web:
+    container_name: notifier_production_web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ./entrypoint.sh
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "9050:8000"
+    volumes:
+      - .:/app
+      - /home/nf_docker_data/production/public/static:/app/public/static
+      - /home/nf_docker_data/production/media:/app/media
+    depends_on:
+      - notifier_production_db
+    links:
+      - notifier_production_db
+
+  notifier_production_celery:
+    container_name: notifier_production_celery
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    entrypoint: ./celery.sh
+    env_file:
+      - .env
+    depends_on:
+      - notifier_production_redis
+    volumes:
+      - .:/app
+      - /home/nf_docker_data/production/public/static:/app/public/static
+      - /home/nf_docker_data/production/media:/app/media
+      - /home/nf_docker_data/production/celery:/var/lib/celery/log
+
+  notifier_production_celery_flower:
+    container_name: notifier_production_celery_flower
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - notifier_production_redis
+      - notifier_production_celery
+    volumes:
+      - .:/app
+      - /home/nf_docker_data/production/public/static:/app/public/static
+      - /home/nf_docker_data/production/media:/app/media
+    ports:
+      - "5545:5555"
+    command: celery -A Notifier flower --address=0.0.0.0 --port=5555 --basic_auth=ambala:ambalA9090
+
+  notifier_production_celery_beat:
+    container_name: notifier_production_celery_beat
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - notifier_production_redis
+    volumes:
+      - .:/app
+      - /home/nf_docker_data/production/public/static:/app/public/static
+      - /home/nf_docker_data/production/media:/app/media
+    command: celery -A Notifier.celery beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                </div>
+                <!-- Server Side Processing start-->
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                {{ block_keyword_form.keywords }}
+                                <small class="text-danger">{{ block_keyword_form.keywords.errors }}</small>
+                                <small class="text-muted">
+                                    <ol class="px-4 pt-2">
+                                        <li>Enter keywords separated by comma.</li>
+                                        <li>SMS content having any of the mentioned keywords will be blocked.</li>
+                                    </ol>
+                                </small>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Server Side Processing end-->
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+
+{% endblock %}

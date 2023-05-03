@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                </div>
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-12 col-lg-4">
+                                    <div class="input-group">
+                                        <input class="form-control" id="log_date" name="date" type="date" value="{{ log_date }}" data-language="en" required
+                                               style="line-height: 1.4 !important;">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-2">
+                                    <a href="javascript:void(0);" class="btn btn-primary" onclick="showLog()">View Log</a>
+                                </div>
+                            </div>
+                            {% if log_data != "" %}
+                                <textarea class="form-control mt-2" rows="20" style="font-size: 13px" readonly>{{ log_data|safe }}</textarea>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+    <script>
+        function showLog() {
+            let log_url = '{% url 'nf.log' log_type 'replace_date' %}';
+            log_url = log_url.replace('replace_date', $("#log_date").val());
+            window.location.href = log_url;
+        }
+    </script>
+{% endblock %}

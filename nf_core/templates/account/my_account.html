@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                </div>
+                <div class="col-xl-4">
+                    <div class="ribbon-wrapper card">
+                        <div class="card-header text-center p-4">
+                            <div class="profile-title">
+                                <div>
+                                    <img class="img-70 rounded-circle mb-2" alt="" src="{{ user_info_instance.user_image.url }}" style="height: 70px; object-fit: cover">
+                                    <br>
+                                    <div class="media-body">
+                                        <h5 class="mb-1">{{ user_info_instance.user.first_name }} {{ user_info_instance.user.last_name }}</h5>
+                                        <p class="mb-0">Member since {{ user_info_instance.user.date_joined|date:"d M Y" }}</p>
+                                        <p class="mb-0">Last login on {{ user_info_instance.user.last_login|date:"d M Y" }}</p>
+                                        <form action="" method="post" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <input type="text" name="action" value="change_photo" hidden required>
+                                            {{ photo_change_form.user_image }}
+                                            <button type="submit" id="photoSubmit" hidden>Submit</button>
+                                        </form>
+                                        <a href="javascript:void(0);" onclick="selectPhoto()">Change Photo</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="ribbon ribbon-bookmark ribbon-success">{{ user_info_instance.user_group }}</div>
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <input type="text" name="action" value="change_password" hidden required>
+                                <div class="mb-3">
+                                    <label class="form-label" for="old_password">Old Password</label>
+                                    <input type="password" class="form-control" id="old_password" name="old_password" placeholder="********" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="new_password1">New Password</label>
+                                    <input type="password" class="form-control" id="new_password1" name="new_password1" placeholder="********" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="new_password2">Confirm New Password</label>
+                                    <input type="password" class="form-control" id="new_password2" name="new_password2" placeholder="********" required>
+                                </div>
+                                <div class="form-footer">
+                                    <button class="btn btn-primary btn-block" data-bs-original-title="" title="">Update Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-8">
+                    <form class="card" action="" method="post">
+                        {% csrf_token %}
+                        <input type="text" name="action" value="change_info" hidden required>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">First Name</label>
+                                        {{ user_form.first_name }}
+                                        <small class="text-danger">{{ user_form.first_name.errors }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Last Name</label>
+                                        {{ user_form.last_name }}
+                                        <small class="text-danger">{{ user_form.last_name.errors }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Company</label>
+                                        {{ user_info_form.company_name }}
+                                        <small class="text-danger">{{ user_info_form.company_name.errors }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Mobile Number</label>
+                                        {{ user_info_form.mobile }}
+                                        <small class="text-danger">{{ user_info_form.mobile.errors }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email address</label>
+                                        <input class="form-control" type="email" placeholder="Email" value="{{ user_info_instance.user.email }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Username</label>
+                                        <input class="form-control" type="text" placeholder="Username" value="{{ user_info_instance.user.username }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Address</label>
+                                        {{ user_info_form.address }}
+                                        <small class="text-danger">{{ user_info_form.address.errors }}</small>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button class="btn btn-primary float-end" type="submit" data-bs-original-title="" title="">Update Profile</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function selectPhoto() {
+            $("#id_user_image").click();
+        }
+
+        function submitPhotoForm() {
+            $("#photoSubmit").click();
+        }
+    </script>
+{% endblock %}

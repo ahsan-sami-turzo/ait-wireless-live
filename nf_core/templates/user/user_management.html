@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatables.css' %}">
+{% endblock css %}
+
+{% block content %}
+    <div class="page-body">
+        {% include 'layout/breadcrumb.html' %}
+        <!-- Container-fluid starts-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    {% include 'layout/message.html' %}
+                    {% if pendingConfig|floatformat:0 != 0 %}
+                        <div class="alert alert-warning text-dark alert-dismissible fade show" role="alert">
+                            {{ pendingConfig|floatformat:0 }} of your clients are awaiting configuration. <a href="{% url 'nf.user.pending.config' %}"><b>Click to View</b></a>
+                            <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close" data-bs-original-title="" title=""></button>
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- Server Side Processing start-->
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="display datatables" id="datatable-post">
+                                    <thead>
+                                    <tr>
+                                        <th>#UID</th>
+                                        <th>Photo</th>
+                                        <th>Info</th>
+                                        <th>Role</th>
+                                        <th>Credit</th>
+                                        <th>Queue</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Server Side Processing end-->
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">View Sender IDs</h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close" data-bs-original-title="" title=""></button>
+                </div>
+                <div class="modal-body">
+                    <table class="display datatables senderIDTable" id="basic-custom">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th class="text-center">Sender ID</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal" data-bs-original-title="" title="">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="debitCreditModal" tabindex="-1" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{% url 'nf.user.fund.debit.credit' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <p class="modal-title" id="exampleModalLongTitle">
+                            <small id="user_name" class="fw-bold" style="font-size: 18px;">NAME HERE</small>
+                            <br>
+                            <small style="font-size: 12px;">Fund Debit/Credit</small>
+                        </p>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close" data-bs-original-title="" title=""></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <input type="text" name="user_id" id="user_id" value="" required hidden>
+                                <div class="form-group">
+                                    <label>Choose Action</label>
+                                    <div class="demo-inline-spacing">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="deposit_type" id="inlineRadio1" value="credit" checked="">
+                                            <label class="form-check-label" for="inlineRadio1">Credit</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="deposit_type" id="inlineRadio2" value="debit">
+                                            <label class="form-check-label" for="inlineRadio2">Debit</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Transaction Amount</label>
+                                    <input type="number" step="any" name="trx_amount" class="form-control" placeholder="0.00" required="">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Select Validity</label>
+                                    <select class="form-control js-example-basic-hide-search" name="validity" required>
+                                        <option value="1" selected="">1 Month</option>
+                                        <option value="2">2 Months</option>
+                                        <option value="3">3 Months</option>
+                                        <option value="4">4 Months</option>
+                                        <option value="5">5 Months</option>
+                                        <option value="6">6 Months</option>
+                                        <option value="7">7 Months</option>
+                                        <option value="8">8 Months</option>
+                                        <option value="9">9 Months</option>
+                                        <option value="10">10 Months</option>
+                                        <option value="11">11 Months</option>
+                                        <option value="12">1 Year</option>
+                                        <option value="24">2 Years</option>
+                                        <option value="36">3 Years</option>
+                                        <option value="120">Unlimited</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">Transaction Remarks</label>
+                                    <textarea class="form-control" id="creditRemarks" name="remarks" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal" data-bs-original-title="" title="">Close</button>
+                        <button class="btn btn-primary" type="submit">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scriptcontent %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        let ssr_url = '{% url 'nf.user.management.ssr' %}';
+        let default_order = [[0, 'asc']];
+        let column_definition = [
+            {
+                targets: 1, orderable: false
+            },
+            {
+                targets: 4, className: "text-center"
+            },
+            {
+                targets: 5, className: "text-center", orderable: false
+            },
+            {
+                targets: 6, className: "text-center"
+            },
+            {
+                targets: 7, className: "text-center", orderable: false
+            }
+        ]
+
+        function viewSenderID(sid) {
+            sid = sid.toString().split("**");
+            $(".senderIDTable").DataTable().destroy();
+            $(".senderIDTable tbody").empty();
+            sid.forEach((sender, key) => {
+                $(".senderIDTable tbody").append(`
+                        <tr>
+                            <td>${key + 1}</td>
+                            <td class="text-center">${sender}</td>
+                        </tr>
+                `);
+            });
+            $(".senderIDTable").DataTable();
+            $("#exampleModalLong").modal('show');
+        }
+
+        function debitCreditModal(user_id, user_name) {
+            $("#debitCreditModal #user_id").val(user_id);
+            $("#debitCreditModal #user_name").html(`${user_name} # ${user_id}`);
+            $("#debitCreditModal").modal('show');
+        }
+    </script>
+    <script src="{% static 'assets/js/datatable/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/js/datatable/datatables/datatable.custom.js' %}"></script>
+{% endblock %}

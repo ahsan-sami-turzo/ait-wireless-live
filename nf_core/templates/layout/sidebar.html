@@ -1,0 +1,130 @@
+{% load static %}
+
+<!-- Page Sidebar Start-->
+<div class="sidebar-wrapper">
+    <div>
+        <div class="logo-wrapper">
+            <a href="#">
+                <img class="img-fluid for-light" src="{% static 'assets/images/ambala.png' %}" style="height: 28px !important;" alt="">
+                <img class="img-fluid for-dark" src="{% static 'assets/images/ambala.png' %}" style="height: 28px !important;" alt="">
+            </a>
+            <div class="back-btn"><i class="fa fa-angle-left"></i></div>
+            <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
+        </div>
+        <div class="logo-icon-wrapper">
+            <a href="#">
+                <img class="img-fluid" src="{% static 'assets/images/favicon.png' %}" style="height: 32px !important;" alt="">
+            </a>
+        </div>
+        <nav class="sidebar-main">
+            <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+            <div id="sidebar-menu">
+                <ul class="sidebar-links" id="simple-bar">
+                    <li class="back-btn">
+                        <a href="{% url 'nf.index' %}">
+                            <img class="img-fluid" src="{% static 'assets/images/ambala.png' %}" style="height: 32px !important;" alt="">
+                        </a>
+                        <div class="mobile-back text-end">
+                            <span>Back</span>
+                            <i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
+                        </div>
+                    </li>
+                    <li class="sidebar-list">
+                        {% url 'nf.index' as activeURL %}
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ activeURL }}">
+                            <i data-feather="home"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list customLink1">
+                        <label class="badge badge-light-danger">
+                            {{ pendingConfig|floatformat:0 }}
+                        </label>
+                        {% url 'nf.user.management' as activeURL %}
+                        <a class="sidebar-link sidebar-title link-nav customLink1" href="{{ activeURL }}">
+                            <i data-feather="users"></i>
+                            <span>User Management</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        {% url 'nf.sms.report' as activeURL %}
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ activeURL }}">
+                            <i data-feather="message-square"></i>
+                            <span>SMS Report</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        {% url 'nf.recharge.report' as activeURL %}
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ activeURL }}">
+                            <i data-feather="credit-card"></i>
+                            <span>Recharge Report</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        {% url 'nf.sms.rate' as activeURL %}
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ activeURL }}">
+                            <i data-feather="dollar-sign"></i>
+                            <span>Default SMS Rate</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        {% url 'nf.sender.id' as activeURL %}
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ activeURL }}">
+                            <i data-feather="tag"></i>
+                            <span>Sender ID</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        {% url 'nf.block.keyword' as activeURL %}
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ activeURL }}">
+                            <i data-feather="slash"></i>
+                            <span>Block Keyword</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="#" data-bs-original-title="" title="">
+                            <i data-feather="book-open"></i>
+                            <span>Reports</span>
+                            <div class="according-menu"><i class="fa fa-angle-right"></i></div>
+                        </a>
+                        <ul class="sidebar-submenu" style="display: none;">
+                            <li><a href="{% url 'nf.report.telco' %}" data-bs-original-title="" title="">Telco Report</a></li>
+                            <li><a href="{% url 'nf.report.telco.tabular' %}" data-bs-original-title="" title="">Telco Report (Tabular)</a></li>
+                            <li><a href="{% url 'nf.report.balance' %}" data-bs-original-title="" title="">Balance Report</a></li>
+                            <li><a href="{% url 'nf.report.delivery.failed' %}" data-bs-original-title="" title="">Delivery/Failed Report</a></li>
+                            <li><a href="{% url 'nf.gateway.traffic.report' %}" data-bs-original-title="" title="">BTRC Gateway Traffic Report</a></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title" href="#" data-bs-original-title="" title="">
+                            <i data-feather="inbox"></i>
+                            <span>Logs</span>
+                            <div class="according-menu"><i class="fa fa-angle-right"></i></div>
+                        </a>
+                        <ul class="sidebar-submenu" style="display: none;">
+                            {% now 'Y-m-d' as dt %}
+                            <li><a href="{% url 'nf.log' 'activity-log' dt %}" data-bs-original-title="" title="">Activity Log</a></li>
+                            <li><a href="{% url 'nf.log' 'error-log' dt %}" data-bs-original-title="" title="">Error Log</a></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-list">
+                        {% url 'nf.my.account' as activeURL %}
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ activeURL }}">
+                            <i data-feather="user"></i>
+                            <span>My Account</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav" href="{% url 'auth.logout' %}">
+                            <i data-feather="log-out"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+        </nav>
+    </div>
+</div>
+<!-- Page Sidebar Ends-->
